@@ -792,6 +792,7 @@
 
     const masterpieces = MODELS.filter((m) => m.special).sort((a, b) => (b.classic || 0) - (a.classic || 0)).slice(0, 10);
     const mpSlides = masterpieces.map((m, i) => `<article class="mp-slide${i === 0 ? ' active' : ''}" data-mp-slide="${i}">
+      <span class="mp-index" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
       <div class="mp-media ${photoClass(m)}${photoClass(m) ? '' : ' mp-noimg'}">${photoClass(m) ? '' : `<span class="mp-fallback">${esc(brandInitials(m.brandRef))}</span>`}</div><div class="mp-shade"></div>
       <div class="mp-copy">
         <div class="mp-kicker">No. ${String(i + 1).padStart(2, '0')} <span>/</span> ${esc(m.tier)} <span>/</span> ${m.cm} cm</div>
@@ -1478,7 +1479,7 @@
         <span class="special-photo-note">${esc(photoCaption(m))}</span>
       </div>
       <div class="special-body">
-        <div class="special-kicker"><span>${esc(m.tier)}</span><span>${state.lang === 'en' ? `Rank ${m.classic || '—'}` : `经典指数 ${m.classic || '—'}`}</span><span>${m.cm} cm</span></div>
+        <div class="special-kicker"><span class="special-number">#${String(index + 1).padStart(2, '0')}</span><span>${esc(m.tier)}</span><span>${state.lang === 'en' ? `Rank ${m.classic || '—'}` : `经典指数 ${m.classic || '—'}`}</span><span>${m.cm} cm</span></div>
         <h3>${esc(m.model)}</h3>
         <p>${esc(m.sig)}</p>
         <div class="special-foot">
