@@ -1,0 +1,90 @@
+/* 系列级产地与风格画像；排名按系列，不按品牌。 */
+const ORIGIN_DEFS = {
+  US: { label: '美产', en: 'US', note: '美国制造' },
+  JP: { label: '日系', en: 'JP', note: '日本 / 亚洲日系产线' },
+  DE: { label: '德奥系', en: 'DE / AT', note: '德国 / 奥地利制造' },
+  CN: { label: '国产', en: 'CN', note: '中国制造' },
+  KR: { label: '韩系', en: 'KR', note: '韩国品牌 / 亚洲产线' },
+  NORDIC: { label: '北欧', en: 'NORDIC / BALTIC', note: '爱沙尼亚等波罗的海地区' },
+  IT: { label: '意大利', en: 'IT', note: '意大利 / 圣马力诺' },
+  CZ: { label: '捷克', en: 'CZ', note: '捷克制造' },
+  EU: { label: '欧洲其他', en: 'EU', note: '其他欧洲产地' }
+};
+const ORIGIN_ORDER = ['US', 'JP', 'DE', 'CN', 'KR', 'NORDIC', 'IT', 'CZ'];
+
+const STYLE_DEFS = [
+  { key: 'modern', name: '现代风格', nameEn: 'Modern', en: 'MODERN', desc: '透明、清晰、精确、控制力强；适合当代作品、爵士与录音。', descEn: 'Transparent, precise and controlled; suited to contemporary repertoire, jazz and recording.' },
+  { key: 'romantic', name: '浪漫派', nameEn: 'Romantic', en: 'ROMANTIC', desc: '温暖、歌唱性、色彩丰富；适合肖邦、李斯特、拉赫玛尼诺夫。', descEn: 'Warm, singing and colourful; suited to Chopin, Liszt and Rachmaninoff.' },
+  { key: 'german', name: '德奥古典', nameEn: 'Austro-German', en: 'AUSTRO-GERMAN', desc: '结构、平衡、低音与和声层次；适合巴赫、莫扎特、贝多芬、勃拉姆斯。', descEn: 'Structure, balance and harmonic depth; suited to Bach, Mozart, Beethoven and Brahms.' },
+  { key: 'jazz', name: '爵士 / 流行', nameEn: 'Jazz / Pop', en: 'JAZZ / POP', desc: '反应快、投射强、节奏清楚；适合爵士、流行与舞台。', descEn: 'Fast response, projection and rhythmic clarity; suited to jazz, pop and stage.' },
+  { key: 'teaching', name: '教学 / 家用', nameEn: 'Teaching / Home', en: 'TEACHING / HOME', desc: '稳定、好维护、触感可控、价格友好；适合长期练习。', descEn: 'Stable, serviceable, controllable and price-aware; suited to long-term practice.' },
+  { key: 'chamber', name: '室内乐 / 录音', nameEn: 'Chamber / Studio', en: 'CHAMBER / STUDIO', desc: '弱音层次、声部平衡与可控投射；适合室内乐与录音。', descEn: 'Dynamic nuance, balance and controlled projection; suited to chamber music and recording.' }
+];
+
+const STYLE_ARCHETYPES = {
+  modern: { modern: 94, romantic: 64, german: 72, jazz: 84, teaching: 56, chamber: 80, note: '透明、快速、控制力强，现代作品与录音友好' },
+  romantic: { modern: 62, romantic: 94, german: 86, jazz: 58, teaching: 50, chamber: 84, note: '温暖、歌唱、色彩丰富，浪漫派曲目更对味' },
+  german: { modern: 72, romantic: 84, german: 94, jazz: 58, teaching: 52, chamber: 88, note: '结构、平衡、低音与和声层次突出' },
+  jazz: { modern: 82, romantic: 58, german: 62, jazz: 94, teaching: 62, chamber: 68, note: '反应快、节奏清楚、舞台投射强' },
+  teaching: { modern: 66, romantic: 52, german: 54, jazz: 64, teaching: 94, chamber: 52, note: '稳定、好维护、价格与手感友好' },
+  chamber: { modern: 78, romantic: 82, german: 88, jazz: 56, teaching: 46, chamber: 94, note: '声部平衡、弱音层次与可控投射' },
+  steinway: { modern: 84, romantic: 92, german: 88, jazz: 92, teaching: 56, chamber: 86, note: '全能型，舞台、爵士与录音都强' },
+  american: { modern: 64, romantic: 70, german: 60, jazz: 80, teaching: 74, chamber: 56, note: '美式直白、价格友好，流行与教学场景合适' }
+};
+
+const SERIES_STYLE = {
+  'bechstein|Concert': { o: 'DE', a: 'german', p: 6 },
+  'bechstein|Academy': { o: 'CZ', a: 'german', p: 0 },
+  'steinway|Grands': { o: 'US', a: 'steinway' },
+  'fazioli|Grands': { o: 'IT', a: 'modern' },
+  'bosendorfer|VC 系列': { o: 'DE', a: 'romantic', p: 5 },
+  'bosendorfer|Classic 系列': { o: 'DE', a: 'chamber', p: 3 },
+  'steingraeber|Grands': { o: 'DE', a: 'chamber' },
+  'estonia|Grands': { o: 'NORDIC', a: 'romantic' },
+  'shigeru|SK 系列': { o: 'JP', a: 'modern', p: 5 },
+  'grotrian|Grands': { o: 'DE', a: 'german' },
+  'bluthner|Classic 系列': { o: 'DE', a: 'romantic' },
+  'yamaha-cf|CF 系列': { o: 'JP', a: 'modern', p: 5 },
+  'henrymason|Henry Mason 系列': { o: 'US', a: 'american' },
+  'sauter|Grands': { o: 'DE', a: 'german' },
+  'haessler|Classic': { o: 'DE', a: 'german' },
+  'petrof|Grands': { o: 'CZ', a: 'romantic' },
+  'schimmel|Konzert': { o: 'DE', a: 'german', p: 6 },
+  'schimmel|Classic': { o: 'DE', a: 'german', p: 3 },
+  'schimmel|Wilhelm Schimmel': { o: 'DE', a: 'teaching', p: 0 },
+  'roenisch|Classic': { o: 'DE', a: 'german' },
+  'augustfoerster|Grands': { o: 'DE', a: 'romantic' },
+  'seiler|SE 系列': { o: 'DE', a: 'german' },
+  'schulze|Masterpiece': { o: 'IT', a: 'romantic' },
+  'boston|Performance Edition': { o: 'JP', a: 'teaching' },
+  'baldwin|BP 系列': { o: 'CN', a: 'american' },
+  'kawai|GX 系列': { o: 'JP', a: 'modern', p: 3 },
+  'kawai|GL 系列': { o: 'JP', a: 'teaching', p: 0 },
+  'yamaha|SX 系列': { o: 'JP', a: 'modern', p: 4 },
+  'yamaha|CX 系列': { o: 'JP', a: 'jazz', p: 2 },
+  'yamaha|GC / GB 系列': { o: 'JP', a: 'teaching', p: 0 },
+  'steinberg|Classic': { o: 'DE', a: 'german' },
+  'kayserburg|KA 系列': { o: 'CN', a: 'teaching' },
+  'hoffmann|Professional': { o: 'CZ', a: 'german', p: 4 },
+  'hoffmann|Tradition': { o: 'CZ', a: 'german', p: 2 },
+  'hoffmann|Vision': { o: 'CZ', a: 'teaching', p: 0 },
+  'wilhelmgrotrian|WG 系列': { o: 'CN', a: 'teaching' },
+  'zimmermann|Studio / Z 系列': { o: 'CN', a: 'teaching' },
+  'ritmuller|RGP 系列': { o: 'CN', a: 'teaching' },
+  'essex|EGP 系列': { o: 'CN', a: 'teaching' },
+  'pearlriver|GP 系列': { o: 'CN', a: 'teaching' },
+  'apollo|GA 系列': { o: 'CN', a: 'teaching' },
+  'apollo|NA 系列': { o: 'JP', a: 'teaching' },
+  'rosler|Grands': { o: 'CZ', a: 'german' },
+  'irmler|Studio': { o: 'CN', a: 'teaching' },
+  'irmler|Professional': { o: 'DE', a: 'german' },
+  'toyama|Grands': { o: 'CN', a: 'teaching' },
+  'yangzi|YZ 系列': { o: 'CN', a: 'teaching' },
+  'samick|SIG 系列': { o: 'KR', a: 'teaching' },
+  'youngchang|Y 系列': { o: 'KR', a: 'teaching' },
+  'hsinghai|XG 系列': { o: 'CN', a: 'teaching' },
+  'hailun|HG 系列': { o: 'CN', a: 'teaching' },
+  'steinburg|Grands': { o: 'CN', a: 'teaching' },
+  'prince|PG 系列': { o: 'CN', a: 'teaching' },
+  'carod|Grands': { o: 'CN', a: 'teaching' }
+};

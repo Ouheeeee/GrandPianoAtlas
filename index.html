@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0f1012">
+<title>全球三角钢琴评测数据库 · GGPRD</title>
+<meta name="description" content="按品牌、系列与预算查询三角钢琴型号，比较同价位钢琴的音色、手感、工艺与优劣。">
+<link rel="stylesheet" href="styles.css?v=20261114h">
+</head>
+<body>
+<!-- GGPRD logo v2 -->
+<div class="app">
+
+  <header class="topbar">
+    <a class="brandmark" href="#" data-view="brand" aria-label="回到全部品牌">
+      <svg width="42" height="42" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <circle cx="32" cy="32" r="29.5" stroke="#c9a86a" stroke-opacity=".4"/>
+        <circle cx="32" cy="32" r="25.6" stroke="#c9a86a" stroke-opacity=".14"/>
+        <path d="M44 20.2c-3.1-3-7.1-4.7-11.2-4.7-8.4 0-14.6 6.4-14.6 15.1s6.2 15.2 14.6 15.2c4.5 0 8.6-1.7 11.5-4.7V32.2H32.6" stroke="#e3c68f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M23 39.8h20.8" stroke="#c9a86a" stroke-width="1.05"/>
+        <path d="M26.4 39.8v4.7M30.8 39.8v4.7M35.2 39.8v4.7M39.6 39.8v4.7" stroke="#c9a86a" stroke-width=".95" opacity=".82"/>
+        <circle cx="47.6" cy="16.4" r="1.45" fill="#e3c68f"/>
+      </svg>
+      <span class="wordmark"><strong>GGPRD</strong><small>GLOBAL GRAND PIANO REVIEW DATABASE</small></span>
+    </a>
+
+    <nav class="tabs" aria-label="主导航">
+      <button class="tab active" data-view="brand">品牌浏览</button>
+      <button class="tab" data-view="price">价格找琴</button>
+      <button class="tab" data-view="style">风格榜</button>
+      <button class="tab" data-view="special">特别款<span class="count" id="specialCount">0</span></button>
+      <button class="tab" data-view="compare">对比台<span class="count" id="compareCount">0</span></button>
+      <button class="tab" data-view="shortlist">短名单<span class="count" id="favCount">0</span></button>
+    </nav>
+
+    <div class="top-actions">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="search" type="search" placeholder="搜索品牌 / 型号" autocomplete="off" aria-label="搜索品牌、型号或系列">
+      </div>
+      <button class="lang-btn" id="langToggle" aria-label="Switch language">EN</button>
+      <button class="icon-btn" id="aboutBtn" title="数据说明" aria-label="数据说明">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 10.8v5.4M12 7.6v.1"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head"><span>品牌索引</span><b id="brandCount">25</b></div>
+      <button class="all-brands active" id="allBrandsBtn" data-brand="">全部品牌 <span id="allBrandCount">172</span></button>
+      <div id="brandNav"></div>
+      <div class="side-note">
+        <b>参考价，不是报价</b>
+        价格为中国大陆新琴参考成交区间，受城市、经销商、汇率与配置影响。下单前请以当地试弹与书面报价为准。
+        <button data-open-about>查看数据口径 →</button>
+      </div>
+    </aside>
+
+    <main id="main">
+      <section class="view" id="view-brand"></section>
+      <section class="view" id="view-price" hidden></section>
+      <section class="view" id="view-style" hidden></section>
+      <section class="view" id="view-special" hidden></section>
+      <section class="view" id="view-compare" hidden></section>
+      <section class="view" id="view-shortlist" hidden></section>
+    </main>
+  </div>
+
+  <div class="compare-bar" id="compareBar" hidden>
+    <span class="label">对比台</span>
+    <div class="compare-chips" id="compareChips"></div>
+    <button class="btn primary" id="goCompare">开始对比</button>
+    <button class="compare-close" data-act="hide-compare-bar" aria-label="关闭对比台" title="关闭对比台">×</button>
+  </div>
+
+  <div id="modalRoot"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="brands-extra.js"></script>
+<script src="brands-extra2.js"></script>
+<script src="meta.js"></script>
+<script src="specials-extra.js"></script>
+<script src="specials-extra2.js"></script>
+<script src="specials-extra3.js"></script>
+<script src="specials-extra4.js"></script>
+<script src="specials-extra5.js"></script>
+<script src="specials-extra6.js"></script>
+<script src="specials-extra7.js?v=20261113b"></script>
+<script src="pianist-quotes.js"></script>
+<script src="series-style.js?v=20261114f"></script>
+<script src="media.js?v=20261114ab"></script>
+<script src="app.js?v=20261114h"></script>
+</body>
+</html>
