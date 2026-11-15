@@ -1370,6 +1370,16 @@ body::after{
  [data-media="off"] .mp-copy h3{font-size:26px}
 }
 
+.brand-year{display:inline-flex;align-items:baseline;gap:6px;color:var(--gold-2);font-family:var(--display);line-height:1}
+.brand-year em{font-style:normal;font-size:7px;letter-spacing:.2em;color:var(--muted);margin-right:1px}
+.brand-year b{font-size:23px;font-weight:400;letter-spacing:.04em}
+.brand-hero-content .brand-year b{font-size:31px}
+.brand-card .brand-year b{font-size:24px}
+@media(max-width:720px){.brand-year b{font-size:20px}.brand-hero-content .brand-year b{font-size:26px}}
+[data-media="off"] .model-row{grid-template-columns:minmax(0,1fr) 150px 208px}
+[data-media="off"] .model-row-photo{display:none!important}
+@media(max-width:920px){[data-media="off"] .model-row{grid-template-columns:minmax(0,1fr) 140px}}
+@media(max-width:620px){[data-media="off"] .model-row{grid-template-columns:minmax(0,1fr)}}
 @media print{.shortlist-tools{display:none!important}.shortlist-item{break-inside:avoid}}
 
 .compare-diffbar{
@@ -1632,6 +1642,16 @@ body::after{
  [data-media="off"] .mp-copy h3{font-size:26px}
 }
 
+.brand-year{display:inline-flex;align-items:baseline;gap:6px;color:var(--gold-2);font-family:var(--display);line-height:1}
+.brand-year em{font-style:normal;font-size:7px;letter-spacing:.2em;color:var(--muted);margin-right:1px}
+.brand-year b{font-size:23px;font-weight:400;letter-spacing:.04em}
+.brand-hero-content .brand-year b{font-size:31px}
+.brand-card .brand-year b{font-size:24px}
+@media(max-width:720px){.brand-year b{font-size:20px}.brand-hero-content .brand-year b{font-size:26px}}
+[data-media="off"] .model-row{grid-template-columns:minmax(0,1fr) 150px 208px}
+[data-media="off"] .model-row-photo{display:none!important}
+@media(max-width:920px){[data-media="off"] .model-row{grid-template-columns:minmax(0,1fr) 140px}}
+@media(max-width:620px){[data-media="off"] .model-row{grid-template-columns:minmax(0,1fr)}}
 @media print{
   :root{--bg:#fff;--panel:#fff;--ink:#111;--ink-2:#222;--muted:#555;--faint:#777;--line:#ddd;--line-soft:#eee;--gold:#8a6a2f}
   body{background:#fff;color:#111}

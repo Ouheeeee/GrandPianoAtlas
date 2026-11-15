@@ -217,6 +217,9 @@
   }
   function logoMarkup(brand, size) {
     size = size || 'sm';
+    if (!HAS_MEDIA) {
+      return `<span class="brand-year"><em>EST.</em><b>${esc(brand.est || '—')}</b></span>`;
+    }
     const info = logoInfo(brand);
     if (info) {
       return `<span class="brand-logo ${size}${info.dark ? ' dark' : ''}"><img src="${info.src}" alt="${esc(brand.name)} logo" loading="lazy" decoding="async"></span>`;
