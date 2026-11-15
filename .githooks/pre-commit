@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+bad="$(git diff --cached --name-only --diff-filter=ACM | grep -Ei '\.(jpe?g|png|webp|gif|bmp|tiff?|avif)$|^offline\.html$|^assets/(photos|logos)/' || true)"
+if [ -n "$bad" ]; then
+  echo "Blocked: manufacturer media / offline bundle in commit:" >&2
+  echo "$bad" >&2
+  exit 1
+fi

@@ -10,11 +10,12 @@
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const tierMeta = (t) => TIERS[t];
   const tierStyle = (t) => `--tier:${TIERS[t].color}`;
+  const DATA_UPDATED = '2026-11';
   const fmtNum = (n) => (Number.isInteger(n) ? String(n) : Number(n).toFixed(1));
-  const priceRange = (m) => m.quote ? '定制询价' : `¥${fmtNum(m.low)}–${fmtNum(m.high)} 万`;
+  const priceRange = (m) => m.quote ? (state.lang === 'en' ? 'Price on request' : '定制询价') : `¥${fmtNum(m.low)}–${fmtNum(m.high)} 万`;
   const priceMid = (m) => m.quote ? '定制询价' : `约 ${fmtNum(Math.round(m.mid * 10) / 10)} 万`;
   const sizeText = (cm) => `${cm} cm`;
-  const feetText = (cm) => `约 ${(cm / 30.48).toFixed(1)} 英尺`;
+  const feetText = (cm) => state.lang === 'en' ? `approx. ${(cm / 30.48).toFixed(1)} ft` : `约 ${(cm / 30.48).toFixed(1)} 英尺`;
   const tierRank = (t) => TIERS[t].rank;
 
   const SIZE_BANDS = {
@@ -248,7 +249,7 @@
     </svg>`;
   }
 
-  const COUNTRY_EN = { '德国': 'Germany', '美国 / 德国': 'USA / Germany', '意大利': 'Italy', '奥地利': 'Austria', '爱沙尼亚': 'Estonia', '日本': 'Japan', '美国': 'USA', '捷克': 'Czechia', '圣马力诺': 'San Marino', '日本 / 印尼': 'Japan / Indonesia', '中国': 'China', '日本 / 中国': 'Japan / China', '韩国 / 印尼': 'Korea / Indonesia', '韩国 / 中国': 'Korea / China', '德国 / 中国': 'Germany / China', '中国广州': 'Guangzhou, China', '中国宜昌': 'Yichang, China' };
+  const COUNTRY_EN = { '德国': 'Germany', '美国 / 中国': 'USA / China', '美国 / 德国': 'USA / Germany', '意大利': 'Italy', '奥地利': 'Austria', '爱沙尼亚': 'Estonia', '日本': 'Japan', '美国': 'USA', '捷克': 'Czechia', '圣马力诺': 'San Marino', '日本 / 印尼': 'Japan / Indonesia', '中国': 'China', '日本 / 中国': 'Japan / China', '韩国 / 印尼': 'Korea / Indonesia', '韩国 / 中国': 'Korea / China', '德国 / 中国': 'Germany / China', '中国广州': 'Guangzhou, China', '中国宜昌': 'Yichang, China' };
   const countryEn = (v) => COUNTRY_EN[v] || v;
   const seriesEn = (v) => String(v || '').replace(/系列/g, 'Series').replace(/Grands/g, 'Grands');
 
@@ -342,6 +343,24 @@
       ? '特别版通常按订单制作，价格、木材、漆面与交期都需要与品牌定制部门单独确认。'
       : `目前参考价 ${priceRange(m)}，在 ${m.tier} 分级中属于${m.mid >= 180 ? '高预算段' : m.mid >= 80 ? '中高预算段' : m.mid >= 35 ? '中预算段' : '入门预算段'}。`;
     return `${b.zh} ${m.model} 是 ${s.name} 系列中长 ${m.cm} cm 的型号，定位为${m.use}。${m.sig}。${b.character} 核心强项是${s.highlight}；需要留意的是${s.tradeoff}。\n\n${sizeLine}${siblingNote(m)}\n\n${priceLine} 如果它与你的预算和空间匹配，下一步应该带着熟悉的曲目现场试弹，并比较同价位的 2–3 台对手。`;
+  }
+
+  function longDescriptionEn(m) {
+    const b = m.brandRef, s = m.seriesRef;
+    const sizeLine = m.cm >= 240
+      ? 'At concert-grand size it offers the fullest bass extension and soundstage, but it is also the most demanding of room and acoustics.'
+      : m.cm >= 210
+        ? 'This size already provides relaxed dynamic headroom, and suits a mid-size recital hall or a professional studio.'
+        : m.cm >= 190
+          ? 'A seven-foot-class body balances bass scale with footprint, a common choice for advanced home use and small recitals.'
+          : m.cm >= 170
+            ? 'This is the home-friendly sweet spot: more complete bass than a baby grand without taking over the living room.'
+            : 'The small body is easy to place and budget-friendly, with inevitable compromises in bass scale and loud dynamics.';
+    const priceLine = m.quote
+      ? 'Special editions are usually made to order; price, veneer, finish and lead time are confirmed with the maker.'
+      : `Indicative price is ${priceRange(m)}, which places it in the ${m.tier} band and the ${m.mid >= 180 ? 'upper' : m.mid >= 80 ? 'upper-middle' : m.mid >= 35 ? 'middle' : 'entry'} budget range.`;
+    const series = m.seriesRef && m.seriesRef.name ? seriesEn(m.seriesRef.name) : 'its series';
+    return `${m.brand} ${m.model} is a ${m.cm} cm model in the ${series} series, positioned for ${tr(m.use)}. ${tr(m.sig).replace(/[.。]$/, '')}. ${tr(b.character)} Its core strength is ${EN_TEXT[s.highlight] || 'its particular craft and finish'}; the trade-off to watch is ${EN_TEXT[s.tradeoff] || 'price and lead time need confirming'}.\n\n${sizeLine}\n\n${priceLine} If it fits your room and budget, play it with familiar repertoire and compare two or three rivals at the same price.`;
   }
 
   function usedTiers(m) {
@@ -580,8 +599,81 @@
     '暂无收藏': 'Nothing saved yet', '特别款目录': 'Special editions',
     '风格': 'Style', '现代风格': 'Modern', '浪漫派': 'Romantic', '德奥古典': 'Austro-German classical',
     '爵士 / 流行': 'Jazz and pop', '教学 / 家用': 'Teaching and home', '室内乐 / 录音': 'Chamber and studio',
-    '全部产地': 'All origins', '来源': 'Origin', '当前': 'Current'
+    '全部产地': 'All origins', '来源': 'Origin', '当前': 'Current',
+    '尺寸': 'Size', '参考价': 'Price', '产地': 'Origin', '适合': 'Best for', '数据更新': 'Data updated',
+    '生产年份': 'Year', '重量': 'Weight', '键盘': 'Keyboard', '静音系统': 'Silent system',
+    '这台琴的画像': 'The instrument', '编辑评分 / 5': 'Editorial rating / 5',
+    '优势': 'Strengths', '注意': 'Watch-outs', '二手参考价梯队': 'Used-price tiers',
+    '特别版说明': 'Special editions', '成色': 'Condition', '典型状态': 'Typical state',
+    '残值率': 'Residual value', '访问官网 ↗': 'Visit website ↗', '关闭': 'Close',
+    '详情': 'Details', '收藏': 'Save', '已收藏': 'Saved', '对比': 'Compare', '已选': 'Selected',
+    '参考价，不是报价': 'Reference prices, not quotations',
+    '开始对比': 'Start comparing', '查看数据来源 →': 'How the data works →',
+    'Art Case 特别版': 'Art Case special edition', '特别版': 'Special edition',
+    'GGPRD 文字图版': 'GGPRD plate',
+    '价格为中国大陆新琴参考成交区间，受城市、经销商、汇率与配置影响。下单前请以当地试弹与书面报价为准。': 'Indicative prices for new pianos in mainland China, shaped by city, dealer, exchange rate and specification. Always audition locally and get a written quote before ordering.',
+    '查看数据口径 →': 'How the data works →', '全球三角钢琴评测数据库': 'Global Grand Piano Review Database',
+    '参考价': 'reference price', '个品牌': 'brands', '图片暂缺 · 官网可查': 'See the maker website',
+    '图片来自品牌官网；缺图保留官网链接。': 'No manufacturer photography is used on this site.',
+    '定制询价': 'Price on request', '约': 'approx.', '英尺': 'ft', '万': '×10k CNY'
   };
+
+  const EN_NOTES = {
+    '德国': 'Germany', '捷克': 'Czechia', '日本': 'Japan', '中国': 'China', '奥地利': 'Austria',
+    '意大利': 'Italy', '美国': 'USA', '韩国': 'Korea', '爱沙尼亚': 'Estonia', '德国 / 中国': 'Germany / China',
+    '中国广州': 'Guangzhou, China', '中国宜昌': 'Yichang, China', '日本 / 印尼': 'Japan / Indonesia',
+    '日本 / 中国': 'Japan / China', '韩国 / 印尼': 'Korea / Indonesia', '韩国 / 中国': 'Korea / China',
+    '美国 / 中国': 'USA / China', '美国 / 德国': 'USA / Germany', '音乐厅': 'Concert hall', '音乐会': 'Concert', '家用': 'Home',
+    '录音室': 'Studio', '教学': 'Teaching', '舞台': 'Stage', '爵士': 'Jazz', '室内乐': 'Chamber'
+  };
+  Object.assign(EN_TEXT, EN_NOTES);
+  const EN_GENERATED = {
+    '音乐厅 / 专业院校 / 协奏': 'Concert hall / conservatory / concerto',
+    '中型演奏厅 / 专业工作室': 'Mid-size recital hall / professional studio',
+    '小型演奏 / 进阶家用': 'Small recital / advanced home',
+    '家用主力 / 教学 / 沙龙': 'Home / teaching / salon',
+    '公寓 / 练习 / 小空间': 'Apartment / practice / small room',
+    '音乐会尺寸，低音下潜与整体声场最完整': 'Concert-grand size: the fullest bass extension and soundstage.',
+    '大琴体带来从容的动态余量': 'A larger body gives generous dynamic headroom.',
+    '尺寸与空间平衡，低音已有规模': 'A balance of size and footprint, with real bass scale.',
+    '家用黄金尺寸，兼顾音色与占地': 'The home-friendly size: tone and footprint in balance.',
+    '占地友好，适合公寓与小型空间': 'Easy to place, suited to apartments and small rooms.',
+    '需要较大空间与良好声学，搬运维护成本高': 'Needs a large room and good acoustics; moving and upkeep cost more.',
+    '对房间尺寸和声学有一定要求': 'Asks something of the room and its acoustics.',
+    '强奏时仍需控制空间混响': 'Loud passages still need control of room reverberation.',
+    '受尺寸限制，低音规模与动态余量不及 7 尺以上琴': 'Size limits bass scale and dynamic headroom versus a 7-foot grand.',
+    '低音下潜与强奏动态明显受限': 'Bass extension and loud dynamics are clearly limited.',
+    '音色个性': 'Tonal character', '触感控制': 'Touch control', '声场投射': 'Projection',
+    '做工用料': 'Build and materials', '品牌保值': 'Resale value',
+    '准新 · 95 新': 'Near-new · 95%', '良好 · 9 成新': 'Good · 90%',
+    '一般 · 8 成新': 'Fair · 80%', '需整备 · 7 成新': 'Needs work · 70%',
+    '1–3 年 / 极少使用': '1–3 years / little use', '4–8 年 / 定期调律': '4–8 years / regularly tuned',
+    '9–15 年 / 外观磨损': '9–15 years / cosmetic wear', '16 年以上 / 需检修': '16+ years / needs inspection',
+    '原厂状态，轻微使用痕迹': 'Original condition, light signs of use',
+    '正常使用，无结构性维修': 'Normal use, no structural repairs',
+    '可能需要整音与易损件更换': 'May need voicing and wear parts',
+    '建议预留整修与搬运预算': 'Budget for refurbishment and moving',
+    '官网可查': 'See the maker website', '设计特别版': 'designed special edition', '顶级': 'Perfect', 'Perfect · 顶级': 'Perfect',
+    '透明': 'Transparent', '清晰': 'Clear', '颗粒感': 'Grain', '现代作品': 'Contemporary', '录音': 'Recording',
+    '炫技': 'Virtuoso', '标杆': 'Benchmark', '良好': 'Good', '优秀': 'Excellent', '一般': 'Fair',
+    '温暖': 'Warm', '歌唱性': 'Cantabile', '明亮': 'Bright', '柔和': 'Soft', '舞台': 'Stage',
+    '古典': 'Classical', '爵士': 'Jazz', '室内乐': 'Chamber', '教学': 'Teaching', '全能': 'All-round',
+    '参考成交价': 'Street price', '万元': '×10k CNY', '200 万+': '200 ×10k+',
+    'BRAND / 品牌档案': 'BRAND / PROFILE', '品牌档案': 'Profile',
+    '成立': 'Founded', '系列': 'Series', '型号': 'Models', '全系参考价': 'Full range',
+    '按价格筛选本品牌': 'Filter this brand by price', '选两台代表对比': 'Compare two models',
+    '官网 ↗': 'Website ↗', '优势 Strengths': 'Strengths', '注意 Watch-outs': 'Watch-outs',
+    '强项：': 'Strength:', '注意：': 'Watch:', '德国手工': 'Hand-built in Germany',
+    '音乐会': 'Concert', '音乐厅': 'Concert hall', '款区间重叠': 'models overlap',
+    '多个价位': 'Multiple bands', '参考成交 · 含税': 'Reference · tax incl.',
+    '最低': 'Min', '最高': 'Max', '尺寸': 'Size', '产地': 'Origin',
+    'Peter Maly 设计特别版': 'Peter Maly designed special edition',
+    'Fazioli Art Case 的绘画、木皮与漆面工艺': 'Fazioli Art Case painting, veneer and finish work',
+    '均为单独委托，价格与交期需询价': 'Each is a bespoke commission; price and lead time on request'
+  };
+  Object.assign(EN_TEXT, EN_GENERATED);
+  if (typeof EN_SOURCE !== 'undefined') Object.assign(EN_TEXT, EN_SOURCE);
+  const tr = (s) => state.lang === 'en' ? (EN_TEXT[s] || s) : s;
 
   /* 小型词汇表只服务界面骨架，长文案一律写在中英各自的模板里，避免“翻译腔”。 */
 
@@ -607,7 +699,17 @@
       v = v.replace(/(\d+)\s*个品牌/g, '$1 brands');
       v = v.replace(/已选\s*(\d+)\s*\/\s*10/g, 'Selected $1 / 10');
       v = v.replace(/(\d+)\s*款/g, '$1 models');
-      v = v.replace(/^(\d+)\s*–\s*(\d+)\s*万/, '¥$1–$2 ×10k');
+      v = v.replace(/^(\d+(?:\.\d+)?)\s*–\s*(\d+(?:\.\d+)?)\s*万/, '¥$1–$2 ×10k');
+      v = v.replace(/(\d+(?:\.\d+)?)\s*–\s*(\d+(?:\.\d+)?)\s*万/g, '¥$1–$2 ×10k');
+      v = v.replace(/参考价/g, 'reference price');
+      v = v.replace(/强项：/g, 'Strength: ');
+      v = v.replace(/注意：/g, 'Watch: ');
+      v = v.replace(/(\d+)\s*万\+/g, '$1 ×10k+');
+      v = v.replace(/设计特别版/g, 'designed special edition');
+      v = v.replace(/特别版/g, 'special edition');
+      v = v.replace(/系列/g, 'Series');
+      v = v.replace(/万元/g, '×10k CNY');
+      v = v.replace(/对数刻度/g, 'log scale');
       if (v !== key) node.nodeValue = raw.replace(key, v);
     });
     root.querySelectorAll('option').forEach((opt) => {
@@ -622,7 +724,8 @@
 
   function applyLanguage() {
     document.documentElement.dataset.lang = state.lang;
-    if (langToggle) langToggle.textContent = state.lang === 'en' ? '中' : 'EN';
+    document.documentElement.lang = state.lang === 'en' ? 'en' : 'zh-CN';
+    if (langToggle) { langToggle.textContent = state.lang === 'en' ? '中' : 'EN'; langToggle.setAttribute('aria-label', state.lang === 'en' ? 'Switch to Chinese' : '切换到英文'); }
     const navLabels = { brand: ['品牌浏览', 'Brands'], price: ['价格找琴', 'Prices'], style: ['风格榜', 'Styles'], special: ['特别款', 'Special editions'], compare: ['对比台', 'Compare'], shortlist: ['短名单', 'Saved'] };
     tabs.forEach((tab) => {
       const pair = navLabels[tab.dataset.view];
@@ -819,7 +922,7 @@
             <span class="tier-badge" style="${tierStyle(tier)}">${esc(tier)}</span>
           </div>
           <h4>${esc(brand.name)}</h4>
-          <div class="zh">${esc(brand.zh)} · ${esc(brand.country)} · 始于 ${brand.est}</div>
+          <div class="zh">${state.lang === 'en' ? `${esc(countryEn(brand.country))} · founded ${brand.est}` : `${esc(brand.zh)} · ${esc(brand.country)} · 始于 ${brand.est}`}</div>
           <p>${esc(brand.character)}</p>
           <div class="brand-card-foot">
             <div class="price"><small>${ms.length} 款 · 参考价</small>${fmtNum(range.low)}–${fmtNum(range.high)} 万</div>
@@ -973,12 +1076,12 @@
       return `<section class="series-block">
         <div class="series-head">
           <div class="index">${String(i + 1).padStart(2, '0')}</div>
-          <div><h3>${esc(s.name)}</h3><div class="note">${esc(s.note)}</div></div>
+          <div><h3>${esc(EN ? seriesEn(s.name) : s.name)}</h3><div class="note">${esc(EN ? (EN_TEXT[s.note] || `${tr(s.madeIn)} production`) : s.note)}</div></div>
           <div class="right">
-            <div class="tags">${s.special ? '<span class="tag gold">特别版</span>' : ''}${(s.tags || []).filter((t) => !(s.special && t === '特别版')).map((t) => `<span class="tag gold">${esc(t)}</span>`).join('')}</div>
+            <div class="tags">${s.special && !EN ? '<span class="tag gold">特别版</span>' : ''}${(s.tags || []).filter((t) => !(s.special && t === '特别版')).map((t) => EN ? (EN_TEXT[t] ? `<span class="tag gold">${esc(EN_TEXT[t])}</span>` : '') : `<span class="tag gold">${esc(t)}</span>`).join('')}</div>
           </div>
         </div>
-        <div class="series-intro"><span>强项：<b>${esc(s.highlight)}</b></span><span>注意：${esc(s.tradeoff)}</span></div>
+        <div class="series-intro"><span>${EN ? 'Strength:' : '强项：'} <b>${esc(EN ? (EN_TEXT[s.highlight] || 'Distinctive craft and finish') : s.highlight)}</b></span><span>${EN ? 'Watch:' : '注意：'} ${esc(EN ? (EN_TEXT[s.tradeoff] || 'Price, finish and lead time need confirming') : s.tradeoff)}</span></div>
         <div class="model-list">${ms.map(renderModelRow).join('')}</div>
       </section>`;
     }).join('');
@@ -986,7 +1089,7 @@
     viewEls.brand.innerHTML = `
       <div class="page-head">
         <div class="eyebrow">BRAND / 品牌档案</div>
-        <div class="crumb"><button data-brand="">全部品牌</button><span>/</span><button data-tier-filter="${brand.tier}">${esc(brand.tier)}</button><span>/</span><span>${esc(brand.zh)}</span></div>
+        <div class="crumb"><button data-brand="">全部品牌</button><span>/</span><button data-tier-filter="${brand.tier}">${esc(brand.tier)}</button><span>/</span><span>${esc(state.lang === 'en' ? brand.name : brand.zh)}</span></div>
         <div class="brand-hero ${brandPhotoClass(brand) && brand.heroPhoto !== false ? 'has-photo' : ''} ${brandPhotoFit(brand)}" style="${tierStyle(brand.tier)}">
           <div class="brand-hero-photo ${brandPhotoClass(brand)}"></div>
           <div class="brand-hero-shade"></div>
@@ -994,7 +1097,7 @@
             ${logoMarkup(brand, 'lg')}
             <div class="eyebrow">${esc(brand.tier)} · ${esc(TIERS[brand.tier].zh)}</div>
             <h1>${esc(brand.name)}</h1>
-            <div class="zh">${esc(brand.zh)} · ${esc(brand.country)} · 始于 ${brand.est}</div>
+            <div class="zh">${state.lang === 'en' ? `${esc(countryEn(brand.country))} · founded ${brand.est}` : `${esc(brand.zh)} · ${esc(brand.country)} · 始于 ${brand.est}`}</div>
             <p class="character">${esc(brand.character)}</p>
             ${brandPhotoClass(brand) && brand.heroPhoto !== false ? `<div class="brand-photo-credit">${esc(brand.photoCredit || '品牌官网图')}</div>` : ''}
           </div>
@@ -1019,7 +1122,7 @@
         </div>
       </div>
       ${filtered.length ? seriesHtml : emptyState('这个品牌下没有匹配的型号', '清除搜索词或放宽分级筛选。', '清除筛选', 'reset-brand-filter')}
-      <div class="footnote"><span>${esc(brand.name)} · 价格为参考区间，实际成交受配置、地区与经销商影响。</span><button data-open-about>数据口径 →</button></div>
+      <div class="footnote"><span>${state.lang === 'en' ? `${esc(brand.name)} · prices are indicative; final deals depend on specification, region and dealer.` : `${esc(brand.name)} · 价格为参考区间，实际成交受配置、地区与经销商影响。`}</span><button data-open-about>${state.lang === 'en' ? 'How the data works →' : '数据口径 →'}</button></div>
     `;
   }
 
@@ -1230,7 +1333,7 @@
     const EN = state.lang === 'en';
     const b = budgetBounds();
     const multi = (state.priceBands || []).length > 0;
-    const brandOptions = BRANDS.map((br) => `<option value="${br.id}"${state.priceBrand === br.id ? ' selected' : ''}>${esc(br.zh)} · ${esc(br.name)}</option>`).join('');
+    const brandOptions = BRANDS.map((br) => `<option value="${br.id}"${state.priceBrand === br.id ? ' selected' : ''}>${EN ? esc(br.name) : esc(br.zh) + ' · ' + esc(br.name)}</option>`).join('');
     const tierChips = [['all', '全部']].concat(Object.keys(TIERS).map((t) => [t, t])).map(([v, label]) => {
       const active = v === 'all' ? !state.priceTiers.length : state.priceTiers.indexOf(v) !== -1;
       return `<button class="chip${active ? ' active' : ''}" data-tier-filter="${v}">${esc(label)}</button>`;
@@ -1403,7 +1506,7 @@
       const selected = state.compare.indexOf(m.id) !== -1;
       const r = selected ? 5.2 : 4.2;
       const stroke = selected ? '#f3eee4' : 'none';
-      return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}" fill="${TIERS[m.tier].color}" fill-opacity="${on ? 0.9 : 0.24}" stroke="${stroke}" stroke-width="${selected ? 1.3 : 0}" data-act="detail" data-id="${m.id}" style="cursor:pointer"><title>${esc(m.brandZh)} ${esc(m.model)} · ${priceRange(m)} · ${m.cm} cm</title></circle>`;
+      return `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}" fill="${TIERS[m.tier].color}" fill-opacity="${on ? 0.9 : 0.24}" stroke="${stroke}" stroke-width="${selected ? 1.3 : 0}" data-act="detail" data-id="${m.id}" style="cursor:pointer"><title>${esc(state.lang === 'en' ? m.brand : m.brandZh)} ${esc(m.model)} · ${priceRange(m)} · ${m.cm} cm</title></circle>`;
     }).join('');
 
     const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="三角钢琴价格与尺寸分布图">
@@ -1421,7 +1524,7 @@
       circle.addEventListener('mouseenter', () => {
         const m = MODEL_BY_ID[circle.dataset.id];
         if (!m) return;
-        tip.innerHTML = `<b>${esc(m.brandZh)} ${esc(m.model)}</b> · ${esc(priceRange(m))} · ${m.cm} cm`;
+        tip.innerHTML = `<b>${esc(state.lang === 'en' ? m.brand : m.brandZh)} ${esc(m.model)}</b> · ${esc(priceRange(m))} · ${m.cm} cm`;
         const cr = circle.getBoundingClientRect();
         const br = box.getBoundingClientRect();
         tip.style.left = `${cr.left - br.left + cr.width / 2}px`;
@@ -1514,7 +1617,8 @@
     const EN = state.lang === 'en';
     if (selected.length < 2) {
       const one = selected[0];
-      const presets = COMPARE_PRESETS.map((p, i) => `<button class="preset-card" data-preset="${i}"><b>${esc(p.title)}</b><span>${esc(p.desc)}</span><em>一键载入 →</em></button>`).join('');
+      const presetEn = [{ title: '40–50 ×10k · home workhorses', desc: 'Yamaha C3X / Petrof P194 / Schimmel C189 / Boston GP-193' }, { title: '80–110 ×10k · European hand-built', desc: 'Shigeru SK-7 / Grotrian Charis / Blüthner Model 6 / Schimmel K219' }, { title: '180 ×10k+ · concert', desc: 'Steinway D-274 / C. Bechstein D 282 / Bösendorfer 280VC / Fazioli F278' }];
+      const presets = COMPARE_PRESETS.map((p, i) => `<button class="preset-card" data-preset="${i}"><b>${esc(EN ? presetEn[i].title : p.title)}</b><span>${esc(EN ? presetEn[i].desc : p.desc)}</span><em>${EN ? 'Load set →' : '一键载入 →'}</em></button>`).join('');
       viewEls.compare.innerHTML = `
         <div class="page-head">
           <div class="eyebrow">${EN ? 'COMPARISON' : '对比台'}</div>
@@ -1523,15 +1627,15 @@
         </div>
         <div class="empty">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="7" height="16" rx="2"/><rect x="14" y="4" width="7" height="16" rx="2"/><path d="M10 12h4"/></svg>
-          <h4>${one ? '已选 1 台，再选至少 1 台' : '还没有选择对比型号'}</h4>
-          <p>${one ? `当前：${esc(one.brandZh)} ${esc(one.model)}。再从同价位里挑 1–9 台，差异会更清楚。` : '在品牌页、价格页或详情弹窗中点击“对比”，最多同时比较 10 台。'}</p>
+          <h4>${EN ? (one ? 'One selected — add at least one more' : 'No models selected yet') : (one ? '已选 1 台，再选至少 1 台' : '还没有选择对比型号')}</h4>
+          <p>${EN ? (one ? `Selected: ${esc(one.brand)} ${esc(one.model)}. Add one to nine more close rivals to sharpen the comparison.` : 'Use “Compare” on a brand, price or detail view to add up to ten pianos.') : (one ? `当前：${esc(one.brandZh)} ${esc(one.model)}。再从同价位里挑 1–9 台，差异会更清楚。` : '在品牌页、价格页或详情弹窗中点击“对比”，最多同时比较 10 台。')}</p>
           <div class="compare-empty-actions">
-            <button class="btn primary" data-view="price">去价格页选琴</button>
+            <button class="btn primary" data-view="price">${EN ? 'Choose by budget' : '去价格页选琴'}</button>
             ${one ? `<button class="btn" data-act="peers" data-id="${one.id}">自动找 3 台同价位</button>` : ''}
-            <button class="btn ghost" data-act="clear-compare">清空选择</button>
+            <button class="btn ghost" data-act="clear-compare">${EN ? 'Clear selection' : '清空选择'}</button>
           </div>
         </div>
-        <div class="section-head"><h3>经典同价位组合</h3><div class="line"></div><p>一键载入，可再替换</p></div>
+        <div class="section-head"><h3>${EN ? 'Classic price-matched sets' : '经典同价位组合'}</h3><div class="line"></div><p>${EN ? 'Load a set, then swap models' : '一键载入，可再替换'}</p></div>
         <div class="preset-compare">${presets}</div>
         <div class="footnote"><span>${EN ? 'Scores are editorial. Prices are indicative only.' : '评分为编辑口径；价格以书面报价为准。'}</span><button data-open-about>${EN ? 'Methodology →' : '数据口径 →'}</button></div>
       `;
@@ -1820,9 +1924,9 @@
     const pClass = showPhoto ? photoClass(m) : '';
     const info = showPhoto ? photoInfo(m) : null;
     const official = officialUrl(m);
-    const ratings = RATING_KEYS.map(([key, label]) => `<div class="rating-row"><span class="rating-name">${label}<em>${ratingLabel(m.ratings[key])}</em></span>${ratingMeter(m.ratings[key], false)}<b>${m.ratings[key]}</b></div>`).join('');
+    const ratings = RATING_KEYS.map(([key, label]) => `<div class="rating-row"><span class="rating-name">${EN ? tr(label) : label}<em>${ratingLabel(m.ratings[key])}</em></span>${ratingMeter(m.ratings[key], false)}<b>${m.ratings[key]}</b></div>`).join('');
     const peerHtml = peers.length ? peers.map((p) => `<button class="peer-card" data-act="detail" data-id="${p.id}" style="${tierStyle(p.tier)}">
-      <span class="pt">${esc(p.tier)} · ${p.cm} cm</span><b>${esc(p.brandZh)} ${esc(p.model)}</b><span>${priceRange(p)}</span>
+      <span class="pt">${esc(p.tier)} · ${p.cm} cm</span><b>${esc(state.lang === 'en' ? p.brand : p.brandZh)} ${esc(p.model)}</b><span>${priceRange(p)}</span>
     </button>`).join('') : '<span style="font-size:11px;color:var(--faint)">暂无价格接近的对手。</span>';
     const quoteList = (typeof PIANIST_QUOTES !== 'undefined' && PIANIST_QUOTES[`${m.brandId}|${m.model}`]) || [];
     const quotesHtml = quoteList.length ? `<div class="modal-section quote-section">
@@ -1831,11 +1935,11 @@
     </div>` : '';
     const used = usedTiers(m);
     const usedHtml = used.length ? `<div class="used-wrap">
-      <table class="used-table"><thead><tr><th>成色</th><th>典型状态</th><th>参考价</th><th>残值率</th></tr></thead><tbody>
-      ${used.map((u) => `<tr><td><b>${esc(u.label)}</b><span>${esc(u.age)}</span></td><td>${esc(u.note)}</td><td>¥${fmtNum(Math.round(u.low * 2) / 2)}–${fmtNum(Math.round(u.high * 2) / 2)} 万</td><td>${u.pctLow}–${u.pctHigh}%</td></tr>`).join('')}
+      <table class="used-table"><thead><tr><th>${EN ? 'Condition' : '成色'}</th><th>${EN ? 'Typical state' : '典型状态'}</th><th>${EN ? 'Reference price' : '参考价'}</th><th>${EN ? 'Residual' : '残值率'}</th></tr></thead><tbody>
+      ${used.map((u) => `<tr><td><b>${esc(tr(u.label))}</b><span>${esc(tr(u.age))}</span></td><td>${esc(tr(u.note))}</td><td>¥${fmtNum(Math.round(u.low * 2) / 2)}–${fmtNum(Math.round(u.high * 2) / 2)} 万</td><td>${u.pctLow}–${u.pctHigh}%</td></tr>`).join('')}
       </tbody></table>
-      <p class="used-note">以新琴参考价中位数为锚，按年龄/成色曲线、品牌保值与尺寸流动性折算；不含翻新、运费、调律与地区价差。仅作议价锚点。</p>
-    </div>` : `<div class="mini-note"><h5>特别版说明</h5><ul><li>Art Case / 定制款没有标准二手梯队，价格取决于具体木材、漆面、工艺与出处。</li><li>如考虑二手，请单独做 provenance（来源）与修复评估。</li></ul></div>`;
+      <p class="used-note">${EN ? 'Anchored to the midpoint of the new-price range and adjusted for age, condition, resale strength and size liquidity; excludes restoration, transport, tuning and regional differences. A negotiation reference only.' : '以新琴参考价中位数为锚，按年龄/成色曲线、品牌保值与尺寸流动性折算；不含翻新、运费、调律与地区价差。仅作议价锚点。'}</p>
+    </div>` : `<div class="mini-note"><h5>${EN ? 'Special editions' : '特别版说明'}</h5><ul><li>${EN ? 'Art Case and custom models have no standard used-price ladder; value depends on the specific veneer, finish, craft and provenance.' : 'Art Case / 定制款没有标准二手梯队，价格取决于具体木材、漆面、工艺与出处。'}</li><li>${EN ? 'If buying used, assess provenance and restoration separately.' : '如考虑二手，请单独做 provenance（来源）与修复评估。'}</li></ul></div>`;
     const actions = [];
     if (!m.quote) {
       actions.push(`<button class="btn primary${selected ? ' on' : ''}" data-act="compare" data-id="${m.id}" data-on="已加入对比" data-off="加入对比">${selected ? '已加入对比' : '加入对比'}</button>`);
@@ -1857,40 +1961,46 @@
           <span class="modal-photo-credit">${esc(info ? info.caption : '官网可查')}</span>
         </div>
         <div class="modal-head" style="${tierStyle(m.tier)}">
-          <span class="tier-badge" style="${tierStyle(m.tier)}">${esc(m.tier)} · ${esc(TIERS[m.tier].zh)}</span>
+          <span class="tier-badge" style="${tierStyle(m.tier)}">${esc(m.tier)}${EN ? '' : ' · ' + esc(TIERS[m.tier].zh)}</span>
           ${m.special ? '<span class="tier-badge" style="--tier:#c9a86a;margin-left:4px">特别版</span>' : ''}
-          <h2 id="detailTitle">${esc(m.brandZh)} ${esc(m.model)}</h2>
-          <div class="brandline">${esc(m.brand)} · ${esc(m.series)} · ${esc(m.madeIn)} ${official ? `<a href="${official}" target="_blank" rel="noopener" class="inline-official">官网 ↗</a>` : ''}</div>
-          <p class="sig">${esc(m.sig)}</p>
+          <h2 id="detailTitle">${esc(state.lang === 'en' ? m.brand : m.brandZh)} ${esc(m.model)}</h2>
+          <div class="brandline">${esc(m.brand)} · ${esc(tr(m.series))} · ${esc(tr(m.madeIn))} ${official ? `<a href="${official}" target="_blank" rel="noopener" class="inline-official">官网 ↗</a>` : ''}</div>
+          <p class="sig">${esc(tr(m.sig))}</p>
         </div>
         <div class="modal-body">
           <div class="spec-grid">
-            <div><span>尺寸</span><b>${m.cm} cm · ${feetText(m.cm)}</b></div>
-            <div><span>参考价</span><b style="color:var(--gold-2)">${priceRange(m)}</b></div>
-            <div><span>产地</span><b>${esc(m.madeIn)}</b></div>
-            <div><span>适合</span><b>${esc(m.use)}</b></div>
+            <div><span>${EN ? 'Size' : '尺寸'}</span><b>${m.cm} cm · ${feetText(m.cm)}</b></div>
+            <div><span>${EN ? 'Price' : '参考价'}</span><b style="color:var(--gold-2)">${priceRange(m)}</b></div>
+            <div><span>${EN ? 'Origin' : '产地'}</span><b>${esc(tr(m.madeIn))}</b></div>
+            <div><span>${EN ? 'Best for' : '适合'}</span><b>${esc(tr(m.use))}</b></div>
+            ${m.year ? `<div><span>生产年份</span><b>${esc(m.year)}</b></div>` : ''}
+            ${m.weight ? `<div><span>重量</span><b>${esc(m.weight)} kg</b></div>` : ''}
+            ${m.keys ? `<div><span>键盘</span><b>${esc(m.keys)}</b></div>` : ''}
+            ${m.silent ? `<div><span>静音系统</span><b>${esc(m.silent)}</b></div>` : ''}
+            <div><span>${EN ? 'Data updated' : '数据更新'}</span><b>${DATA_UPDATED}</b></div>
           </div>
           <div class="modal-section">
-            <h4>这台琴的画像</h4>
-            <p class="long-desc">${esc(longDescription(m))}</p>
+            <h4>${EN ? 'The instrument' : '这台琴的画像'}</h4>
+            <p class="long-desc">${esc(EN ? longDescriptionEn(m) : longDescription(m))}</p>
             <div class="profile-tags">${(m.brandRef.toneTags || []).map((t) => `<span class="tag gold">${esc(t)}</span>`).join('')}${(m.brandRef.musicTags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>
           </div>
-          <div class="modal-section"><h4>编辑评分 / 5 <span style="font-weight:400;letter-spacing:0;color:var(--faint)">价格带校准 · 保值单独评估</span></h4><div class="rating-grid">${ratings}</div></div>
+          <div class="modal-section"><h4>${EN ? 'Editorial rating / 5' : '编辑评分 / 5'} <span style="font-weight:400;letter-spacing:0;color:var(--faint)">${EN ? 'calibrated within price band; resale assessed separately' : '价格带校准 · 保值单独评估'}</span></h4><div class="rating-grid">${ratings}</div></div>
           <div class="modal-section split">
             <div class="mini-note"><h5>${EN ? 'Strengths' : '优势'}</h5><ul>${prosFor(m).map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
             <div class="mini-note warn"><h5>${EN ? 'Watch-outs' : '注意'}</h5><ul>${consFor(m).map((s) => `<li>${esc(s)}</li>`).join('')}</ul></div>
           </div>
           <div class="modal-section">
-            <h4>二手参考价梯队 <span style="font-weight:400;letter-spacing:0;color:var(--faint)">按成色 / 年份分类</span></h4>
+            <h4>${EN ? 'Used-price tiers' : '二手参考价梯队'} <span style="font-weight:400;letter-spacing:0;color:var(--faint)">${EN ? 'by condition / age' : '按成色 / 年份分类'}</span></h4>
             ${usedHtml}
           </div>
           ${m.quote ? '' : `<div class="modal-section"><h4>同价位对手 · 价格接近，但取舍不同</h4><div class="peer-list">${peerHtml}</div></div>`}
           ${quotesHtml}
           <div class="modal-actions">${actions.join('')}</div>
-          <div class="footnote" style="margin-top:18px"><span>价格为参考区间，非报价；评分、优劣与二手梯队为编辑判断。产品图来自品牌官网，仅作识别与示意。</span></div>
+          <div class="footnote" style="margin-top:18px"><span>${EN ? 'Indicative prices, not quotations. Ratings, pros and cons and used tiers are editorial judgements. No manufacturer photography is used on this site.' : '价格为参考区间，非报价；评分、优劣与二手梯队为编辑判断。网页版不使用厂商图片。'}</span></div>
         </div>
       </div>
     </div>`;
+    if (state.lang === 'en') translateTextNodes(modalRoot);
     document.body.classList.add('no-scroll');
     setTimeout(() => { const btn = $('.modal-close', modalRoot); if (btn) btn.focus(); }, 30);
   }
@@ -1905,6 +2015,54 @@
 
   function openAbout() {
     lastFocused = document.activeElement;
+    if (state.lang === 'en') {
+      modalRoot.innerHTML = `<div class="modal-overlay" data-modal-overlay>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" style="max-width:780px">
+          <div class="modal-head">
+            <button class="modal-close" data-act="close-modal" aria-label="Close">×</button>
+            <span class="tier-badge" style="--tier:var(--gold)">DATA NOTES</span>
+            <h2 id="aboutTitle">How the data works</h2>
+            <p class="sig">A buying and comparison tool, not a quotation system. Every price is an order of magnitude, not a dealer commitment.</p>
+          </div>
+          <div class="modal-body">
+            <div class="modal-section"><h4>Prices</h4><div class="mini-note" style="margin-bottom:8px"><ul>
+              <li>Unit: RMB 10,000. Basis: indicative street range for new pianos in mainland China, tax included. Data version: November 2026 (estimate).</li>
+              <li>Ranges combine list prices, import costs, market transactions and model positioning. City, dealer, specification, exchange rate and promotions can move them by 20–30% or more.</li>
+              <li>This is not a live quote. Ask for a written quote and confirm origin, year, serial number, specification, warranty and delivery before ordering.</li>
+            </ul></div></div>
+            <div class="modal-section"><h4>Models and tiers</h4><div class="mini-note" style="margin-bottom:8px"><ul>
+              <li>43 brands, 326 current or commonly traded grands, including 98 Art Case / special editions (e.g. Fazioli Marco Polo, C. Bechstein Sphinx, Steinway Crown Jewel). Player systems, discontinued models and some small custom runs are not fully covered.</li>
+              <li>The five tiers and their order are a user-specified editorial framework, not an objective ranking or industry consensus.</li>
+              <li>Tone, touch, projection and build are calibrated within a price band, compressing differences at the same price. Resale strength is assessed separately from new-price movement.</li>
+              <li>Different series under one brand can differ greatly; judge the series and the specific model, not the badge alone.</li>
+              <li>Scores use an editorial five-point scale for relative comparison, not laboratory measurement.</li>
+              <li>The web edition uses no manufacturer photography or logos. Brand and model names are used only to identify the instruments, and each model links to the maker where possible.</li>
+              <li>For several recently added brands, models and prices are compiled from public material and market estimates; confirm with the maker and dealer before buying.</li>
+              <li>Complete fields: brand, series, model, size, reference price, origin and tier. Weight, production year, keyboard and silent system are shown only when a reliable source exists; unverified fields are left blank. Data version 2026-11.</li>
+            </ul></div></div>
+            <div class="modal-section"><h4>How to use it</h4><div class="mini-note" style="margin-bottom:8px"><ul>
+              <li><b>Brands</b>: enter through the five tiers, then inspect each series, size, reference price and one-line positioning.</li>
+              <li><b>Budget finder</b>: set a budget, match models whose price bands overlap, and filter by origin. The dots and “Match on price” button surface three to seven close rivals.</li>
+              <li><b>Styles</b>: rankings are by series rather than brand, across modern, Romantic, Austro-German, jazz/pop, teaching/home and chamber/studio.</li>
+              <li><b>Compare</b>: up to ten pianos, with a short difference summary, strengths, watch-outs and scores; print or copy the summary.</li>
+              <li><b>Used tiers</b>: four condition bands anchored to the new-price midpoint, adjusted for age, condition, resale strength and size liquidity. A negotiation reference only.</li>
+              <li><b>Saved list</b>: kept in this browser only, ready for dealer visits.</li>
+            </ul></div></div>
+            <div class="modal-section"><h4>Audition checklist</h4><div class="mini-note" style="margin-bottom:8px"><ul>
+              <li>Play at least three pianos in the same price band with familiar repertoire: one slow movement, one loud passage, one fast scale.</li>
+              <li>Listen for a full but clear low midrange, a treble that does not turn brittle, controllable soft playing, natural sustain, and an action that suits your depth and rebound.</li>
+              <li>Ask about origin, year, new/used status, voicing history, warranty, delivery, tuning visits and trade-in policy.</li>
+              <li>Use an independent technician for used, ex-demo or non-authorised stock.</li>
+            </ul></div></div>
+            <div class="modal-actions"><button class="btn primary" data-act="close-modal">Close</button></div>
+          </div>
+        </div>
+      </div>`;
+      if (state.lang === 'en') translateTextNodes(modalRoot);
+      document.body.classList.add('no-scroll');
+      setTimeout(() => { const btn = $('.modal-close', modalRoot); if (btn) btn.focus(); }, 30);
+      return;
+    }
     modalRoot.innerHTML = `<div class="modal-overlay" data-modal-overlay>
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" style="max-width:780px">
         <div class="modal-head">
@@ -1930,8 +2088,9 @@
               <li>音色、触感、投射、做工按价格带校准并压缩同价位差距；品牌保值单独按国内二手流通评估，不随新琴价格自动抬升。</li>
               <li>同一品牌的不同系列差异很大，请以系列与具体型号为准。</li>
               <li>评分为编辑口径 5 分制，用于同场相对比较，并非实验室测量。</li>
-              <li>每款型号尽量配品牌官网图或同系列示意图；没有可靠图片的型号留空，并保留官网直达链接。图片版权归品牌所有，仅作识别与选购参考。</li>
+              <li>网页版不收录厂商图片或 logo；品牌与型号仅以文字识别，并保留官网直达链接。</li>
               <li>部分新增品牌（Haessler、Rönisch、Baldwin、Wilh. Steinberg、Essex、Rösler、Irmler、Toyama、Hsinghai、Hailun、Steinburg、Carod、Zimmermann、Apollo）的型号与价格为公开资料与市场估算，购买前请以官网及经销商信息为准。</li>
+              <li>目前完整字段：品牌、系列、型号、尺寸、参考价、产地、分级。重量、生产年份、键盘与静音系统只在有可靠来源时显示；未核实的不填。数据版本 2026-11。</li>
             </ul></div>
           </div>
           <div class="modal-section">
@@ -1971,6 +2130,7 @@
         </div>
       </div>
     </div>`;
+    if (state.lang === 'en') translateTextNodes(modalRoot);
     document.body.classList.add('no-scroll');
     setTimeout(() => { const btn = $('.modal-close', modalRoot); if (btn) btn.focus(); }, 30);
   }

@@ -7,3 +7,19 @@
 - `assets/brand/`：GGPRD 自有标识与 favicon
 
 本机离线完整版（含图片）不在本目录，也不会同步到线上。
+
+## Guard against images on the web edition
+
+Run before committing:
+
+```bash
+bash scripts/check-no-media.sh
+```
+
+Enable the local pre-commit hook once:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The hook rejects JPG/PNG/WebP/GIF/BMP/TIFF/AVIF, `assets/photos`, `assets/logos` and `offline.html`.
