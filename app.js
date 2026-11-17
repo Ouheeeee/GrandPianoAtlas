@@ -1062,6 +1062,7 @@
   }
 
   function renderBrandDetail(brand) {
+    const EN = state.lang === 'en';
     const all = brandModels(brand);
     const filtered = all.filter((m) => {
       if (state.tier !== 'all' && m.tier !== state.tier) return false;
