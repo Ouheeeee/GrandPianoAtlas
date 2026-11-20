@@ -896,7 +896,7 @@
       </button>`;
     }).join('');
 
-    const masterpieces = MODELS.filter((m) => m.special).sort((a, b) => (b.classic || 0) - (a.classic || 0)).slice(0, 10);
+    const masterpieces = MODELS.filter((m) => m.special).sort((a, b) => classicScore(b) - classicScore(a) || tierRank(a.tier) - tierRank(b.tier)).slice(0, 10);
     const mpSlides = masterpieces.map((m, i) => `<article class="mp-slide${i === 0 ? ' active' : ''}" data-mp-slide="${i}">
       <span class="mp-index" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
       <div class="mp-media ${photoClass(m)}${photoClass(m) ? '' : ' mp-noimg'}">${photoClass(m) ? '' : `<span class="mp-fallback">${esc(brandInitials(m.brandRef))}</span>`}</div><div class="mp-shade"></div>
@@ -1546,8 +1546,55 @@
   }
 
   /* ---------- 特别款目录 ---------- */
+  const CLASSIC_OVERRIDES = {
+    'fazioli|Marco Polo (F308)': 100,
+    'bechstein|D 282 Sphinx': 99.5,
+    'bosendorfer|Secession': 99,
+    'bosendorfer|290 Klimt': 98.6,
+    'steinway|B-211 Elbphilharmonie': 98.4,
+    'shigeru|SK-EX KIZASHI': 98.2,
+    'bluthner|Model 1 Crystal': 98,
+    'bechstein|D 282 Louis XV': 97.8,
+    'steinway|D-274 Ultra Black': 97.4,
+    'steinway|D-274 Ultra White': 97.4,
+    'steinway|B-211 Dubai Opera': 97,
+    'steinway|B-211 Salzburger Festspiele': 96.6,
+    'steinway|B-211 Shanghai Symphony': 96.2,
+    'steinway|D-274 Crown Jewel': 96,
+    'bosendorfer|290 Johann Strauss': 95.5,
+    'bosendorfer|290 Beethoven': 95.2,
+    'bosendorfer|290 Imperial Artisan': 95,
+    'bluthner|Kaiser Wilhelm': 94.8,
+    'steinway|D-274 Lang Lang Black Diamond': 94.4,
+    'fazioli|Gold Leaf (F212)': 94,
+    'bechstein|B 212 Sphinx': 94,
+    'bosendorfer|Jean Cocteau': 93.6,
+    'steinway|B-211 Straw Marquetry': 93.2,
+    'steinway|D-274 Straw Marquetry': 93,
+    'bluthner|Model 1 Louis XIV': 92.5,
+    'fazioli|M. Liminal (F228)': 92,
+    'steinway|D-274 African Pommele': 91.5,
+    'bechstein|D 282 Vogelaugenahorn': 91,
+    'steinway|D-274 Kewazinga Bubinga': 90.5,
+    'steinway|B-211 East Indian Rosewood': 90,
+    'steinberg|WS-D275': 78,
+    'steinberg|WS-B211': 76,
+    'steinberg|WS-A188ID-B2DII': 74
+  };
+  const classicScore = (m) => {
+    const v = CLASSIC_OVERRIDES[`${m.brandId}|${m.model}`];
+    return v == null ? (m.classic || 0) : v;
+  };
+  const CLASSIC_BANDS = [
+    { key: 'S', min: 96, zh: '传世级', en: 'Museum' },
+    { key: 'A', min: 90, zh: '重要限量', en: 'Major' },
+    { key: 'B', min: 80, zh: '艺术外观', en: 'Art case' },
+    { key: 'C', min: 0, zh: '常规特别版', en: 'Studio' }
+  ];
+  const classicBand = (score) => CLASSIC_BANDS.find((b) => score >= b.min) || CLASSIC_BANDS[CLASSIC_BANDS.length - 1];
+
   function specialModels() {
-    return MODELS.filter((m) => m.special).sort((a, b) => (b.classic || 0) - (a.classic || 0) || tierRank(a.tier) - tierRank(b.tier));
+    return MODELS.filter((m) => m.special).sort((a, b) => classicScore(b) - classicScore(a) || tierRank(a.tier) - tierRank(b.tier));
   }
 
   function renderSpecialView() {
@@ -1561,7 +1608,7 @@
       </div>
       <div class="special-note panel">
         <span><b>${state.lang === 'en' ? 'Classic index' : '经典指数'}</b> ${state.lang === 'en' ? 'an editorial order' : '为编辑排序'}</span>
-        <span>${state.lang === 'en' ? 'Each one is built to order. Price, veneer and lead time are confirmed by the maker.' : '单台定制；价格、木材与交期以品牌确认为准。'}</span>
+        <span>${state.lang === 'en' ? 'Classic index weighs rarity, artistry, provenance and the standing of the base instrument; S/A/B/C are bands, not price tiers.' : '经典指数按稀缺性、艺术工艺、历史/文化出处、原型琴地位综合评估；S/A/B/C 为档位，不是价格排名。'}</span>
         <button class="btn small" data-view="brand">${state.lang === 'en' ? 'Back to brands' : '回到品牌浏览'}</button>
       </div>
       <div class="special-grid">${cards}</div>
@@ -1586,7 +1633,7 @@
         <span class="special-photo-note">${esc(photoCaption(m))}</span>
       </div>
       <div class="special-body">
-        <div class="special-kicker"><span class="special-number">#${String(index + 1).padStart(2, '0')}</span><span>${esc(m.tier)}</span><span>${state.lang === 'en' ? `Rank ${m.classic || '—'}` : `经典指数 ${m.classic || '—'}`}</span><span>${m.cm} cm</span></div>
+        <div class="special-kicker"><span class="special-number">#${String(index + 1).padStart(2, '0')}</span><span>${esc(m.tier)}</span><span>${classicBand(classicScore(m)).key} · ${classicScore(m)}</span><span>${m.cm} cm</span></div>
         <h3>${esc(m.model)}</h3>
         <p>${esc(m.sig)}</p>
         <div class="special-foot">

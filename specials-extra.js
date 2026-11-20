@@ -65,7 +65,7 @@ const SPECIAL_EXTRA = [
       name: 'Carl Rönisch Edition', note: 'Carl Rönisch 纪念版木皮与细节', madeIn: '德国',
       highlight: 'Rönisch 的纪念版木皮', tradeoff: '特殊木皮，价格需确认', tags: ['特别版', '纪念版']
     }, models: [
-      { model: '186 Carl Rönisch Edition', cm: 186, quote: true, classic: 55, sig: 'Carl Rönisch 纪念版树瘤木皮，186 的收藏级外观', tags: ['Carl Rönisch', '树瘤木皮'], official: 'https://www.roenisch-pianos.de/', noPhoto: true }
+      { model: '186 Carl Rönisch Edition', cm: 186, quote: true, classic: 55, sig: 'Carl Rönisch 纪念版树瘤木皮，186 的收藏级外观', tags: ['Carl Rönisch', '树瘤木皮'], official: 'https://www.roenisch-pianos.de/en/carl-roenisch-edition.html', photo: 'roenisch186' }
     ]
   },
   {
