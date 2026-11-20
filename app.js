@@ -2032,7 +2032,7 @@
               <li>This is not a live quote. Ask for a written quote and confirm origin, year, serial number, specification, warranty and delivery before ordering.</li>
             </ul></div></div>
             <div class="modal-section"><h4>Models and tiers</h4><div class="mini-note" style="margin-bottom:8px"><ul>
-              <li>43 brands, 326 current or commonly traded grands, including 98 Art Case / special editions (e.g. Fazioli Marco Polo, C. Bechstein Sphinx, Steinway Crown Jewel). Player systems, discontinued models and some small custom runs are not fully covered.</li>
+              <li>43 brands, 333 current or commonly traded grands, including 105 Art Case / special editions (e.g. Fazioli Marco Polo, C. Bechstein Sphinx, Steinway Crown Jewel). Player systems, discontinued models and some small custom runs are not fully covered.</li>
               <li>The five tiers and their order are a user-specified editorial framework, not an objective ranking or industry consensus.</li>
               <li>Tone, touch, projection and build are calibrated within a price band, compressing differences at the same price. Resale strength is assessed separately from new-price movement.</li>
               <li>Different series under one brand can differ greatly; judge the series and the specific model, not the badge alone.</li>
@@ -2084,7 +2084,7 @@
           <div class="modal-section">
             <h4>型号与分级</h4>
             <div class="mini-note" style="margin-bottom:8px"><ul>
-              <li>收录 43 个品牌、326 款现产或常见在售三角琴，含 98 款 Art Case / 特别版（如 Fazioli Marco Polo、C. Bechstein Sphinx、Steinway Crown Jewel）；自动演奏/静音版、停产型号与部分小批量定制未全部列入。</li>
+              <li>收录 43 个品牌、333 款现产或常见在售三角琴，含 105 款 Art Case / 特别版（如 Fazioli Marco Polo、C. Bechstein Sphinx、Steinway Crown Jewel）；自动演奏/静音版、停产型号与部分小批量定制未全部列入。</li>
               <li>Perfect / Prime / Premier / Passable / Pedestrian 五档及品牌顺序完全来自你的指定，没有任何排名依据，不代表客观评价或行业定论。</li>
               <li>音色、触感、投射、做工按价格带校准并压缩同价位差距；品牌保值单独按国内二手流通评估，不随新琴价格自动抬升。</li>
               <li>同一品牌的不同系列差异很大，请以系列与具体型号为准。</li>

@@ -750,4 +750,18 @@ const EN_SOURCE = {
 "山茶花主题手绘艺术琴壳，290 Imperial 的东方花园版本": "A hand-painted camellia art case: the Oriental garden edition of the 290 Imperial",
 "透明亚克力与白色结构，K 213 的设计特别版": "Clear acrylic and a white structure: the K 213 design special edition",
 "白色描金洛可可琴壳，P 173 Breeze 的艺术版本": "A white rococo case with gilded detail: the art edition of the P 173 Breeze"
+,
+"汉堡易北爱乐音乐厅限定版，B-211 仅 8 台，琴盖内缘以建筑波浪为灵感。": "Elbphilharmonie edition of the B-211, limited to eight pianos, with the hall’s wave form traced inside the lid.",
+"迪拜歌剧院限定版，B-211 与 D-274 共 14 台，阿拉伯纹样绘于内盖。": "Dubai Opera edition: fourteen B-211 and D-274 grands, with Arabesque patterns painted inside the lid.",
+"萨尔茨堡音乐节限定版，B-211 以节日大厅的金色与建筑线条为装饰。": "Salzburger Festspiele edition of the B-211, finished with the festival’s gold tones and architectural lines.",
+"上海交响乐团 140 周年限定版，B-211 限量 20 台，纪念乐团与城市的音乐史。": "Shanghai Symphony Orchestra 140th-anniversary edition: twenty B-211 grands, marking the orchestra and the city’s musical history.",
+"Ultra Black 限量版，D-274 全黑键盘与哑光黑漆面，全球 8 台。": "Ultra Black: a D-274 with an all-black keyboard and matte black finish, limited to eight.",
+"Ultra White 限量版，D-274 全白键盘与纯白漆面，全球 8 台。": "Ultra White: a D-274 with an all-white keyboard and pure white finish, limited to eight.",
+"Shigeru Kawai 与 HERALBONY 共创的 KIZASHI，以 SK-EX 为基底，彩绘琴壳关注多元表达。": "KIZASHI, a Shigeru Kawai × HERALBONY collaboration on the SK-EX, with a hand-painted art-case shell celebrating diverse expression.",
+"把音乐厅的建筑语言压缩进琴壳与内盖": "Concert-hall architecture translated into the case and inner lid",
+"按厅定制，数量少，价格与交期需单独确认": "Made for each hall in tiny numbers; price and lead time confirmed individually",
+"全黑或全白键盘，极端单色设计": "An all-black or all-white keyboard and an extreme monochrome finish",
+"数量极少，属于收藏型定制": "Very few made, and collector-level custom work",
+"把艺术家的绘画直接带进 SK-EX 的琴壳": "Artists’ paintings carried directly onto the SK-EX case",
+"单体艺术项目，数量与交期需向品牌确认": "A one-off art project; quantity and lead time confirmed by the maker"
 };
