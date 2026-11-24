@@ -170,7 +170,6 @@
   })();
 
   function photoInfo(m) {
-    if (m.noPhoto) return null;
     const key = m.photoKey || (m.seriesRef && m.seriesRef.photoKey) || (m.brandRef && m.brandRef.photoKey);
     if (!key || !MEDIA_DATA.photos || !MEDIA_DATA.photos[key]) return null;
     return Object.assign({ key }, MEDIA_DATA.photos[key]);
@@ -202,7 +201,7 @@
   }
   function photoCaption(m) {
     if (!HAS_MEDIA) return 'GGPRD 文字图版';
-    if (!photoInfo(m)) return '图片暂缺 · 官网可查';
+    if (!photoInfo(m)) return '';
     if (m.special) return '特别版 / 系列图';
     return '系列官方图 · 官网';
   }
