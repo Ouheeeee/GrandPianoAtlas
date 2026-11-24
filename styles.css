@@ -949,7 +949,7 @@ body::after{
 .photo-ambient,.photo-sharp{position:absolute;pointer-events:none}
 .photo-ambient{display:none;inset:-22px;background-image:var(--photo);background-size:cover;background-position:center;background-repeat:no-repeat;filter:blur(24px) brightness(.4) saturate(.85);opacity:.42;z-index:0;transform:scale(1.04)}
 .photo-sharp{inset:0;background-image:var(--photo);background-size:contain;background-position:center;background-repeat:no-repeat;z-index:1}
-.model-photo.fit-contain,.special-media.fit-contain,.modal-photo.fit-contain{background-image:none!important;background-color:#0d0e11}
+.model-photo.fit-contain,.special-media.fit-contain,.modal-photo.fit-contain{background-size:contain!important;background-color:#0d0e11;background-position:center}
 .fit-cover .photo-ambient,.fit-cover .photo-sharp{display:none}
 .model-photo-shade,.special-media-shade,.modal-photo-shade{z-index:2}
 .model-photo .tier-badge,.model-photo .official-link,.model-photo .special-tag,.model-photo .photo-note{position:absolute;z-index:3}
@@ -957,7 +957,7 @@ body::after{
 
 /* warm paper plate for official studio product photos */
 .model-photo.photo-plate,.special-media.photo-plate,.modal-photo.photo-plate{
-  background-color:#f1ece3!important;background-image:none!important;
+  background-color:#f1ece3!important;
 }
 .photo-plate .model-photo-shade,.photo-plate .special-media-shade,.photo-plate .modal-photo-shade{display:none}
 .photo-plate .photo-note,.photo-plate .special-photo-note{color:#6f6759}
